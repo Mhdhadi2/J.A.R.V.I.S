@@ -1,35 +1,58 @@
 import ollama
 
+MODEL = "llama3.2:3b"
+
 SYSTEM_PROMPT = """
 You are JARVIS, a personal AI assistant.
 
-Your personality:
+Personality:
 - Calm
 - Intelligent
 - Professional
 - Helpful
 - Slightly witty
-- Concise
+- Natural and conversational
 
 Rules:
-- Keep normal responses short and natural.
-- Do not give unnecessarily long explanations.
-- Do not mention that you are an artificial intelligence language model unless specifically asked.
+- Keep normal responses concise.
+- Do not unnecessarily explain your reasoning.
+- Do not mention that you are an AI language model unless specifically asked.
+- Answer simple questions simply.
 - Address the user naturally.
-- If the user asks a simple question, give a simple answer.
 """
 
-response = ollama.chat(
-    model="llama3.2:3b",
-    messages=[
-        {
-            "role": "system",
-            "content": SYSTEM_PROMPT
-        },
-        {
-            "role": "user",
-            "content": "Explain Python variables in one sentence"
-        }
-    ]
-)
-print(response["message"]["content"])
+messages = [
+    {
+        "role": "system",
+        "content": SYSTEM_PROMPT
+    }
+]
+
+print("JARVIS: Systems online. How may I assist you?")
+print("Type 'exit' to shut down JARVIS.\n")
+
+while True:
+    user_input = input("You: ")
+
+    if user_input.lower().strip() == "exit":
+        print("JARVIS: Shutting down. Goodbye.")
+        break
+
+    messages.append({
+        "role": "user",
+        "content": user_input
+    })
+
+    response = ollama.chat(
+        model=MODEL,
+        messages=messages
+    )
+
+    jarvis_response = response["message"]["content"]
+
+    messages.append({
+        "role": "assistant",
+        "content": jarvis_response
+    })
+
+    print(f"JARVIS: {jarvis_response}\n")
